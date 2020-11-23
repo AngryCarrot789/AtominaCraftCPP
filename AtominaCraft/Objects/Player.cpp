@@ -6,12 +6,10 @@
 
 Player::Player() {
   Reset();
-  hitSpheres.push_back(Sphere(Vector3(0, 0, 0), GH_PLAYER_RADIUS));
-  hitSpheres.push_back(Sphere(Vector3(0, GH_PLAYER_RADIUS - GH_PLAYER_HEIGHT, 0), GH_PLAYER_RADIUS));
 }
 
 void Player::Reset() {
-  Physical::Reset();
+  PhysicalGameObject::Reset();
   cam_rx = 0.0f;
   cam_ry = 0.0f;
   bob_mag = 0.0f;
@@ -37,7 +35,7 @@ void Player::Update() {
     }
 
     //Physics
-    Physical::Update();
+    PhysicalGameObject::Update();
 
     //Looking
     Look(GH_INPUT->mouse_dx, GH_INPUT->mouse_dy);
@@ -117,24 +115,24 @@ void Player::Move(float moveF, float moveL, float moveUp) {
     //velocity.y = tempY;
 }
 
-void Player::OnCollide(Object& other, const Vector3& push) {
+void Player::OnCollide(GameObject& other, const Vector3& push) {
     //Prevent player from rolling down hills if they're not too steep
-    Vector3 newPush = push;
-    if (push.Normalized().y > 0.7f) {
-        newPush.x = 0.0f;
-        newPush.z = 0.0f;
-        onGround = true;
-    }
-
-    //Friction should only apply when player is on ground
-    const float cur_friction = friction;
-    if (!onGround) {
-        friction = 0.0f;
-    }
-
-    //Base call
-    Physical::OnCollide(other, newPush);
-    friction = cur_friction;
+    //Vector3 newPush = push;
+    //if (push.Normalized().y > 0.7f) {
+    //    newPush.x = 0.0f;
+    //    newPush.z = 0.0f;
+    //    onGround = true;
+    //}
+    //
+    ////Friction should only apply when player is on ground
+    //const float cur_friction = friction;
+    //if (!onGround) {
+    //    friction = 0.0f;
+    //}
+    //
+    ////Base call
+    //Physical::OnCollide(other, newPush);
+    //friction = cur_friction;
 }
 
 Matrix4 Player::WorldToCam() const {

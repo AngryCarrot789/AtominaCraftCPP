@@ -83,13 +83,24 @@ public:
 	bool YZIntersects(float y, float z);
 	bool ZXIntersects(float z, float x);
 
-	inline Point GetMinimum() { return Point(minX, minY, minZ); }
-	inline Point GetMaximum() { return Point(maxX, maxY, maxZ); }
+	Point GetMinimum() { return Point(minX, minY, minZ); }
+	Point GetMaximum() { return Point(maxX, maxY, maxZ); }
 
-	inline float GetSizeX() { return IsDirectionFlippedX() ? minX - maxX : maxX - minX; }
-	inline float GetSizeY() { return IsDirectionFlippedY() ? minY - maxY : maxY - minY; }
-	inline float GetSizeZ() { return IsDirectionFlippedZ() ? minZ - maxZ : maxZ - minZ; }
-	inline Size GetSize() { return Size(GetSizeX(), GetSizeY(), GetSizeZ()); }
+	float GetSizeX() { return IsDirectionFlippedX() ? minX - maxX : maxX - minX; }
+	float GetSizeY() { return IsDirectionFlippedY() ? minY - maxY : maxY - minY; }
+	float GetSizeZ() { return IsDirectionFlippedZ() ? minZ - maxZ : maxZ - minZ; }
+	Size GetSize() { return Size(GetSizeX(), GetSizeY(), GetSizeZ()); }
+
+	static AxisAlignedBB CreateAABBFromCenter(Point pos, Size scale) {
+		AxisAlignedBB aabb;
+		aabb.SetFromCenter(pos, scale);
+		return aabb;
+	}
+
+	static AxisAlignedBB CreateAABB(Point min, Point max) {
+		AxisAlignedBB aabb = AxisAlignedBB(min, max);
+		return aabb;
+	}
 
 private:
 	bool IsDirectionFlippedX() { return minX > maxX; }

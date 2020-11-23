@@ -1,8 +1,8 @@
 #pragma once
-#include "../Object.h"
+#include "../GameObject.h"
 #include "../../Resources.h"
 
-class Ground : public Object {
+class Ground : public GameObject {
 public:
   Ground(bool slope=false) {
     if (slope) {

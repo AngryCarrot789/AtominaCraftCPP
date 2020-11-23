@@ -1,7 +1,7 @@
 #pragma once
 #include "../Rendering/Camera.h"
 #include "../Inputs/Input.h"
-#include "../Objects/Object.h"
+#include "../Objects/GameObject.h"
 #include "../Objects/BuiltIn/Sky.h"
 #include "../Objects/Player.h"
 #include "../GameHeader.h"
@@ -27,8 +27,8 @@ public:
 
 private:
   void CreateGLWindow();
-  void InitGLObjects();
-  void DestroyGLObjects();
+  void InitGLGameObjects();
+  void DestroyGLGameObjects();
   void SetupInputs();
   void ConfineCursor();
   void ToggleFullscreen();
@@ -46,7 +46,7 @@ private:
   Input input;
   Timer timer;
 
-  std::vector<std::shared_ptr<Object>> vObjects;
+  std::vector<std::shared_ptr<GameObject>> vGameObjects;
   std::shared_ptr<Sky> sky;
   std::shared_ptr<Player> player;
 

@@ -1,8 +1,8 @@
 #pragma once
-#include "../Object.h"
+#include "../GameObject.h"
 #include "../../Resources.h"
 
-class Pillar : public Object {
+class Pillar : public GameObject {
 public:
   Pillar() {
     mesh = AquireMesh("pillar.obj");

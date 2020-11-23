@@ -1,9 +1,9 @@
 #pragma once
-#include "../Object.h"
+#include "../GameObject.h"
 #include "../../Resources.h"
 #include "../../GameHeader.h"
 
-class PillarRoom : public Object {
+class PillarRoom : public GameObject {
 public:
   PillarRoom() {
     mesh = AquireMesh("pillar_room.obj");
@@ -12,11 +12,5 @@ public:
     scale = Vector3(1.1f);
   }
 
-  void SetPortal(Object& portal) const {
-    portal.pos = LocalToWorld().MultiplyPoint(Vector3(0, 1.5f, -1));
-    portal.euler = euler;
-    portal.euler.y -= GH_PI / 2;
-    portal.scale = Vector3(1, 1.5f, 1) * scale;
-  }
   virtual ~PillarRoom() {}
 };

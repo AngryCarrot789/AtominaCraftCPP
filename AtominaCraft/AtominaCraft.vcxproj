@@ -153,14 +153,13 @@
   <ItemGroup>
     <ClCompile Include="Collisions\AxisAlignedBB.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
-    <ClCompile Include="Collision\Collider.cpp" />
     <ClCompile Include="Game\Engine.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Inputs\Input.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Rendering\Mesh.cpp" />
-    <ClCompile Include="Objects\Object.cpp" />
-    <ClCompile Include="Objects\Physical.cpp" />
+    <ClCompile Include="Objects\GameObject.cpp" />
+    <ClCompile Include="Objects\PhysicalGameObject.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Rendering\Shader.cpp" />
@@ -168,11 +167,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collisions\AxisAlignedBB.h" />
+    <ClInclude Include="Collisions\AxisAlignedSphere.h" />
     <ClInclude Include="Game\Debugging\DebugDraw.h" />
     <ClInclude Include="Math\Matrix4.h" />
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Rendering\Camera.h" />
-    <ClInclude Include="Collision\Collider.h" />
     <ClInclude Include="Objects\BuiltIn\Floorplan.h" />
     <ClInclude Include="Objects\BuiltIn\Ground.h" />
     <ClInclude Include="Objects\BuiltIn\House.h" />
@@ -181,15 +180,14 @@
     <ClInclude Include="GameHeader.h" />
     <ClInclude Include="Inputs\Input.h" />
     <ClInclude Include="Rendering\Mesh.h" />
-    <ClInclude Include="Objects\Object.h" />
-    <ClInclude Include="Objects\Physical.h" />
+    <ClInclude Include="Objects\GameObject.h" />
+    <ClInclude Include="Objects\PhysicalGameObject.h" />
     <ClInclude Include="Objects\BuiltIn\Pillar.h" />
     <ClInclude Include="Objects\BuiltIn\PillarRoom.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Rendering\Shader.h" />
     <ClInclude Include="Objects\BuiltIn\Sky.h" />
-    <ClInclude Include="Collision\Sphere.h" />
     <ClInclude Include="Objects\BuiltIn\Statue.h" />
     <ClInclude Include="Rendering\Texture.h" />
     <ClInclude Include="Game\Timer.h" />

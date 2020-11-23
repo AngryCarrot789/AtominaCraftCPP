@@ -1,8 +1,8 @@
 #pragma once
-#include "../Object.h"
+#include "../GameObject.h"
 #include "../../Resources.h"
 #include "../../Math/Vector3.h"
-class Floorplan : public Object {
+class Floorplan : public GameObject {
 public:
   Floorplan() {
     mesh = AquireMesh("floorplan.obj");

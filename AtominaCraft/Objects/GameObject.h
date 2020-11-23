@@ -7,26 +7,27 @@
 #include "../Rendering/Mesh.h"
 #include "../Rendering/Shader.h"
 #include "../Rendering/Texture.h"
+#include "../Game/Debugging/DebugDraw.h"
 
 //Forward declarations
-class Physical;
+class PhysicalGameObject;
 class Mesh;
 class Texture;
 class Shader;
 
-class Object {
+class GameObject {
 public:
-	Object();
-	virtual ~Object() {}
+	GameObject();
+	virtual ~GameObject() {}
 
 	virtual void Reset();
 	virtual void Draw(const Camera& cam, uint32_t curFBO);
 	virtual void Update() {};
-	virtual void OnHit(Object& other, Vector3& push) {};
+	virtual void OnHit(GameObject& other, Vector3& push) {};
 
 	//Casts
-	virtual Physical* AsPhysical() { return nullptr; }
-	const Physical* AsPhysical() const { return const_cast<Object*>(this)->AsPhysical(); }
+	virtual PhysicalGameObject* AsPhysicalGameObject() { return nullptr; }
+	const PhysicalGameObject* AsPhysicalGameObject() const { return const_cast<GameObject*>(this)->AsPhysicalGameObject(); }
 
 	void DebugDraw(const Camera& cam);
 
@@ -41,7 +42,16 @@ public:
 	Euler euler;
 	Size scale;
 
+	virtual void SetPosition(Point _pos) {
+		pos = _pos;
+	}
+	virtual void SetPosition(float x, float y, float z) {
+		pos = Vector3(x, y, z);
+	}
+
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Texture> texture;
 	std::shared_ptr<Shader> shader;
+
+	bool doesDebugDraw;
 };

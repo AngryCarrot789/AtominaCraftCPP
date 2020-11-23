@@ -1,8 +1,8 @@
 #pragma once
-#include "../Object.h"
+#include "../PhysicalGameObject.h"
 #include "../../Resources.h"
 
-class Tunnel : public Object {
+class Tunnel : public PhysicalGameObject {
 public:
   enum Type {
     NORMAL = 0,
@@ -17,11 +17,13 @@ public:
       mesh = AquireMesh("tunnel_slope.obj");
     } else {
         //mesh = AquireMesh("tunnel.obj");
-        mesh = AquireMesh("tunnel.obj");
+        mesh = AquireMesh("cube.obj");
     }
     shader = AquireShader("texture");
     texture = AquireTexture("electromagnet.bmp");
     //texture = AquireTexture("checker_gray.bmp");
+
+    useGravity = false;
   }
   virtual ~Tunnel() {}
 

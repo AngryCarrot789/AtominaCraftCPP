@@ -1,8 +1,8 @@
 #pragma once
-#include "../Object.h"
+#include "../GameObject.h"
 #include "../../Resources.h"
 
-class Statue : public Object {
+class Statue : public GameObject {
 public:
   Statue(const char* model) {
     mesh = AquireMesh(model);

@@ -1,5 +1,4 @@
 #pragma once
-#include "../Collision/Collider.h"
 #include "Camera.h"
 #include "GL/glew.h"
 #include <vector>
@@ -13,10 +12,6 @@ public:
   ~Mesh();
 
   void Draw();
-
-  void DebugDraw(const Camera& cam, const Matrix4& objMat);
-
-  std::vector<Collider> colliders;
 
 private:
   void AddFace(

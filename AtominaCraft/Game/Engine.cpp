@@ -6,9 +6,6 @@
 #include <string>
 #include "../Objects/BuiltIn/Tunnel.h"
 #include "../Objects/BuiltIn/Ground.h"
-#include "../Collision/Sphere.h"
-#include "../Collision/Collider.h"
-#include "../Collisions/AxisAlignedBB.h"
 #include "Debugging/DebugDraw.h"
 
 Engine* GH_ENGINE = nullptr;
@@ -31,7 +28,7 @@ Engine::Engine() : hWnd(NULL), hDC(NULL), hRC(NULL) {
 
   SetProcessDPIAware();
   CreateGLWindow();
-  InitGLObjects();
+  InitGLGameObjects();
   SetupInputs();
 
   player.reset(new Player);
@@ -110,7 +107,7 @@ int Engine::Run() {
             //Sleep(10);
         }
     }
-    DestroyGLObjects();
+    DestroyGLGameObjects();
     return 0;
 }
 
@@ -118,73 +115,42 @@ AxisAlignedBB aabb;
 
 void Engine::LoadWorld() {
     //Clear out old scene
-    vObjects.clear();
+    vGameObjects.clear();
     player->Reset();
     player->useGravity = false;
     std::shared_ptr<Tunnel> tunnel1(new Tunnel(Tunnel::NORMAL));
-    tunnel1->pos = Vector3(-2.4f, 0, -1.8f);
+    tunnel1->SetPosition(Vector3(-2.4f, 0, -1.8f));
     tunnel1->scale = Vector3(1, 1, 4.8f);
-    vObjects.push_back(tunnel1);
+    vGameObjects.push_back(tunnel1);
 
     std::shared_ptr<Tunnel> tunnel2(new Tunnel(Tunnel::NORMAL));
-    tunnel2->pos = Vector3(2.4f, 0, 0);
+    tunnel2->SetPosition(Vector3(2.4f, 0, 0));
     tunnel2->scale = Vector3(1, 1, 0.6f);
-    vObjects.push_back(tunnel2);
+    vGameObjects.push_back(tunnel2);
 
     std::shared_ptr<Ground> ground(new Ground());
     ground->scale *= 1.2f;
-    vObjects.push_back(ground);
+    ground->doesDebugDraw = false;
+    vGameObjects.push_back(ground);
+
+    //std::shared_ptr<Tunnel> cube(new Tunnel(Tunnel::NORMAL));
+    //cube->SetPosition(0.4f, 1.0f, 0.0f);
+    //cube->scale = Size(1, 1, 1);
+    //vGameObjects.push_back(cube);
 
     player->SetFromCenter(Vector3(0, GH_PLAYER_HEIGHT, 5));
 
-    vObjects.push_back(player);
+    vGameObjects.push_back(player);
 
     aabb.SetFromCenter(Vector3::Zero(), Vector3::Ones());
 }
 
 void Engine::Update() {
     //Update
-    for (size_t i = 0; i < vObjects.size(); ++i) {
-        assert(vObjects[i].get());
-        vObjects[i]->Update();
+    for (size_t i = 0; i < vGameObjects.size(); ++i) {
+        assert(vGameObjects[i].get());
+        vGameObjects[i]->Update();
     }
-
-    //Collisions
-    //For each physics object
-    //for (size_t baseObject = 0; baseObject < vObjects.size(); ++baseObject) {
-    //    Physical* physical = vObjects[baseObject]->AsPhysical();
-    //    if (!physical) { continue; }
-    //    Matrix4 worldToLocal = physical->WorldToLocal();
-    //    //For each object to collide with
-    //    for (size_t j = 0; j < vObjects.size(); ++j) {
-    //        if (baseObject == j) { continue; }
-    //        Object& obj = *vObjects[j];
-    //        if (!obj.mesh) { continue; }
-    //        //For each hit sphere
-    //        for (size_t s = 0; s < physical->hitSpheres.size(); ++s) {
-    //            //Brings point from collider's local coordinates to hits's local coordinates.
-    //            const Sphere& sphere = physical->hitSpheres[s];
-    //            Matrix4 worldToUnit = sphere.LocalToUnit() * worldToLocal;
-    //            Matrix4 localToUnit = worldToUnit * obj.LocalToWorld();
-    //            Matrix4 unitToWorld = worldToUnit.Inverse();
-    //            //For each collider
-    //            for (size_t c = 0; c < obj.mesh->colliders.size(); ++c) {
-    //                Vector3 push;
-    //                const Collider& collider = obj.mesh->colliders[c];
-    //                if (collider.Collide(localToUnit, push)) {
-    //                    //If push is too small, just ignore
-    //                    push = unitToWorld.MulDirection(push);
-    //                    vObjects[j]->OnHit(*physical, push);
-    //                    physical->OnCollide(*vObjects[j], push);
-    //                    worldToLocal = physical->WorldToLocal();
-    //                    worldToUnit = sphere.LocalToUnit() * worldToLocal;
-    //                    localToUnit = worldToUnit * obj.LocalToWorld();
-    //                    unitToWorld = worldToUnit.Inverse();
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 }
 
 void Engine::Render(const Camera& cam, GLuint curFBO) {
@@ -202,18 +168,22 @@ void Engine::Render(const Camera& cam, GLuint curFBO) {
     GLuint drawTest[GH_MAX_PORTALS];
 
     //Draw scene
-    for (size_t i = 0; i < vObjects.size(); ++i) {
-        vObjects[i]->Draw(cam, curFBO);
+    for (size_t i = 0; i < vGameObjects.size(); ++i) {
+        std::shared_ptr<GameObject> &go = vGameObjects[i];
+        go->Draw(cam, curFBO);
+        if (go->AsPhysicalGameObject()) {
+            PhysicalGameObject* a = go->AsPhysicalGameObject();
+            DebugDrawing::DrawAABB(cam, a->collider);
+        }
     }
 
 #if 0
-    //Debug draw colliders
-    for (size_t i = 0; i < vObjects.size(); ++i) {
-        vObjects[i]->DebugDraw(cam);
+    //Debug draw outline
+    for (size_t i = 0; i < vGameObjects.size(); ++i) {
+        vGameObjects[i]->DebugDraw(cam);
     }
 
 #endif
-    DrawAABB(cam, aabb);
 }
 
 LRESULT Engine::WindowProc(HWND hCurWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -357,7 +327,7 @@ void Engine::CreateGLWindow() {
     SetFocus(hWnd);
 }
 
-void Engine::InitGLObjects() {
+void Engine::InitGLGameObjects() {
   //Initialize extensions
   glewInit();
 
@@ -376,8 +346,8 @@ void Engine::InitGLObjects() {
   wglSwapIntervalEXT(1);
 }
 
-void Engine::DestroyGLObjects() {
-  vObjects.clear();
+void Engine::DestroyGLGameObjects() {
+  vGameObjects.clear();
 }
 
 void Engine::SetupInputs() {

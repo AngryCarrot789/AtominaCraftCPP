@@ -1,14 +1,14 @@
 #pragma once
-#include "Physical.h"
+#include "PhysicalGameObject.h"
 
-class Player : public Physical {
+class Player : public PhysicalGameObject {
 public:
 	Player();
 	virtual ~Player() override {}
 
 	virtual void Reset() override;
 	virtual void Update() override;
-	virtual void OnCollide(Object& other, const Vector3& push) override;
+	virtual void OnCollide(GameObject& other, const Vector3& push) override;
 
 	void Look(float mouseDx, float mouseDy);
 	void Move(float moveF, float moveL, float moveUp);

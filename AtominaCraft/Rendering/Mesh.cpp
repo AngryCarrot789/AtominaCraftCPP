@@ -39,21 +39,21 @@ Mesh::Mesh(const char* fname) {
                 is3DTex = true;
             }
         }
-        else if (line.find("c ") == 0) {
-            uint32_t a = 0, b = 0, c = 0;
-            if (line[2] == '*') {
-                const uint32_t v_ix = (uint32_t)vert_palette.size() / 3;
-                a = v_ix - 2; b = v_ix - 1; c = v_ix;
-            }
-            else {
-                std::stringstream ss(line.c_str() + 2);
-                ss >> a >> b >> c;
-            }
-            const Vector3 v1(&vert_palette[(a - 1) * 3]);
-            const Vector3 v2(&vert_palette[(b - 1) * 3]);
-            const Vector3 v3(&vert_palette[(c - 1) * 3]);
-            colliders.push_back(Collider(v1, v2, v3));
-        }
+        //else if (line.find("c ") == 0) {
+        //    uint32_t a = 0, b = 0, c = 0;
+        //    if (line[2] == '*') {
+        //        const uint32_t v_ix = (uint32_t)vert_palette.size() / 3;
+        //        a = v_ix - 2; b = v_ix - 1; c = v_ix;
+        //    }
+        //    else {
+        //        std::stringstream ss(line.c_str() + 2);
+        //        ss >> a >> b >> c;
+        //    }
+        //    const Vector3 v1(&vert_palette[(a - 1) * 3]);
+        //    const Vector3 v2(&vert_palette[(b - 1) * 3]);
+        //    const Vector3 v3(&vert_palette[(c - 1) * 3]);
+        //    colliders.push_back(Collider(v1, v2, v3));
+        //}
         else if (line.find("f ") == 0) {
             //Count the slashes
             int num_slashes = 0;
@@ -172,12 +172,6 @@ Mesh::~Mesh() {
 void Mesh::Draw() {
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLES, 0, (GLsizei)verts.size());
-}
-
-void Mesh::DebugDraw(const Camera& cam, const Matrix4& objMat) {
-  for (size_t i = 0; i < colliders.size(); ++i) {
-    colliders[i].DebugDraw(cam, objMat);
-  }
 }
 
 void Mesh::AddFace(
