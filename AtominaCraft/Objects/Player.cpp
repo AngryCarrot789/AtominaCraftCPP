@@ -14,6 +14,7 @@ void Player::Reset() {
   cam_ry = 0.0f;
   bob_mag = 0.0f;
   bob_phi = 0.0f;
+  mass = 20.0f;
   friction = 0.04f;
   drag = 0.008f;
   onGround = true;

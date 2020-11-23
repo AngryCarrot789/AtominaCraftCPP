@@ -120,16 +120,16 @@ void Engine::LoadWorld() {
     player->useGravity = false;
     std::shared_ptr<Tunnel> tunnel1(new Tunnel(Tunnel::NORMAL));
     tunnel1->SetPosition(Vector3(-2.4f, 0, -1.8f));
-    tunnel1->scale = Vector3(1, 1, 4.8f);
+    tunnel1->SetScale(1, 1, 4.8f);
     vGameObjects.push_back(tunnel1);
 
     std::shared_ptr<Tunnel> tunnel2(new Tunnel(Tunnel::NORMAL));
     tunnel2->SetPosition(Vector3(2.4f, 0, 0));
-    tunnel2->scale = Vector3(1, 1, 0.6f);
+    tunnel2->SetScale(1, 1, 0.6f);
     vGameObjects.push_back(tunnel2);
 
     std::shared_ptr<Ground> ground(new Ground());
-    ground->scale *= 1.2f;
+    ground->SetScale(ground->scale * 1.2f);
     ground->doesDebugDraw = false;
     vGameObjects.push_back(ground);
 
@@ -138,11 +138,11 @@ void Engine::LoadWorld() {
     //cube->scale = Size(1, 1, 1);
     //vGameObjects.push_back(cube);
 
-    player->SetFromCenter(Vector3(0, GH_PLAYER_HEIGHT, 5));
+    player->SetPosition(0, GH_PLAYER_HEIGHT, 5);
 
     vGameObjects.push_back(player);
 
-    aabb.SetFromCenter(Vector3::Zero(), Vector3::Ones());
+    aabb.SetPositionFromCenter(Vector3::Zero(), Vector3::Ones());
 }
 
 void Engine::Update() {
@@ -169,11 +169,41 @@ void Engine::Render(const Camera& cam, GLuint curFBO) {
 
     //Draw scene
     for (size_t i = 0; i < vGameObjects.size(); ++i) {
-        std::shared_ptr<GameObject> &go = vGameObjects[i];
-        go->Draw(cam, curFBO);
-        if (go->AsPhysicalGameObject()) {
-            PhysicalGameObject* a = go->AsPhysicalGameObject();
-            DebugDrawing::DrawAABB(cam, a->collider);
+        std::shared_ptr<GameObject>& obj1 = vGameObjects[i];
+        PhysicalGameObject* physObj1 = obj1->AsPhysicalGameObject();
+
+        obj1->Draw(cam, curFBO);
+
+        if (!physObj1)
+            continue;
+        if (!physObj1->useCollisions)
+            continue;
+
+        DebugDrawing::DrawAABB(cam, physObj1->collider);
+
+        // physObj1 isnt null and it uses collision detection
+        // Collision checking
+        for (size_t a = 0; a < vGameObjects.size(); a++) {
+            std::shared_ptr<GameObject>& obj2 = vGameObjects[a];
+            if (obj1 == obj2)
+                continue;
+
+            PhysicalGameObject* physObj2 = obj2->AsPhysicalGameObject();
+            if (!physObj2)
+                continue;
+            if (!physObj2->useCollisions)
+                continue;
+
+            // obj2 is another object, physobj2 isn't null and uses collision detection.
+            // calculate collisions
+
+            AxisAlignedBB aabb1 = physObj1->collider;
+            AxisAlignedBB aabb2 = physObj2->collider;
+
+            if (aabb1.IsAABBIntersectingAABB(aabb2)) {
+                Vector3 intersection = aabb1.GetIntersection(aabb2);
+                physObj1->SetVelocity(physObj1->velocity + (intersection / physObj1->mass));
+            }
         }
     }
 

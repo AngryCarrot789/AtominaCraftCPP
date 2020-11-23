@@ -4,14 +4,17 @@
 #pragma warning(disable : 4099) // Missing PDB file
 
 //Windows
+
 static const char WINDOW_TITLE[] = "AtominaCraft";
 static const char INSTANCE_CLASS[] = "AtonimaCraft";
 
 //General
+
 static const float GH_PI = 3.141592653589793f;
 static const int GH_MAX_PORTALS = 16;
 
 //Graphics
+
 static const bool GH_START_FULLSCREEN = false;
 static bool GH_HIDE_MOUSE = false;
 static const bool GH_USE_SKY = true;
@@ -27,6 +30,7 @@ static const int GH_FBO_SIZE = 2048;
 static const int GH_MAX_RECURSION = 4;
 
 //Gameplay
+
 static const float GH_MOUSE_SENSITIVITY = 0.001f;
 static const float GH_MOUSE_SMOOTH = 0.5f;
 static const float GH_WALK_SPEED = 2.9f;
@@ -41,7 +45,12 @@ static const float GH_PLAYER_HEIGHT = 1.5f;
 static const float GH_PLAYER_RADIUS = 0.2f;
 static const float GH_GRAVITY = -9.8f;
 
+// Collisions
+
+#define COLLISION_OVERLOAD 1000000000.0f
+
 //Global variables
+
 class Engine;
 class Input;
 class Player;

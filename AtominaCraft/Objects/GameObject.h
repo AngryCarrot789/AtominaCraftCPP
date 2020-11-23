@@ -48,6 +48,12 @@ public:
 	virtual void SetPosition(float x, float y, float z) {
 		pos = Vector3(x, y, z);
 	}
+	virtual void SetScale(Size size) {
+		scale = size;
+	}
+	virtual void SetScale(float x, float y, float z) {
+		scale = Vector3(x, y, z);
+	}
 
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Texture> texture;

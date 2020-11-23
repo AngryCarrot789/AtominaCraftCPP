@@ -1,5 +1,7 @@
 #pragma once
 #include "../Math/Vector3.h"
+#include <math.h>
+#include "../GameHeader.h"
 class AxisAlignedBB {
 public:
 	float minX, minY, minZ;
@@ -22,8 +24,12 @@ public:
 		maxX = maX; maxY = maY; maxZ = maZ;
 	}
 
+	void SetAABB(AxisAlignedBB aabb) {
+		SetBounds(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
+	}
+
 	// Sets the minimums and maximums based on the center coordinates and scale
-	void SetFromCenter(Point pos, Size scale) {
+	void SetPositionFromCenter(Point pos, Size scale) {
 		SetBounds(
 			pos.x - (scale.x / 2),
 			pos.y - (scale.y / 2),
@@ -47,10 +53,6 @@ public:
 		);
 	}
 
-	void SetAABB(AxisAlignedBB aabb) {
-		SetBounds(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
-	}
-
 	AxisAlignedBB Copy() {
 		return AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
@@ -69,8 +71,20 @@ public:
 	float CalculateOffsetY(const AxisAlignedBB aabb, float a);
 	float CalculateOffsetZ(const AxisAlignedBB aabb, float a);
 
-	bool AABBIntersects(AxisAlignedBB aabb);
-	bool VectorIntersects(Point p);
+	bool IsAABBIntersectingAABB(AxisAlignedBB aabb);
+	bool IsVectorIntersectingAABB(Point p);
+
+	Vector3 GetIntersection(AxisAlignedBB aabb) {
+		return Vector3(
+			GetIntersectionAmountX(aabb),
+			GetIntersectionAmountY(aabb),
+			GetIntersectionAmountZ(aabb));
+	}
+
+	bool IsAABBVecIntersecting(Vector3 intersection) {
+		return intersection.x != 0.0f && intersection.y != 0.0f && intersection.z != 0.0f;
+	}
+
 
 	float GetAverageEdgeLength() {
 		float x = maxX - minX;
@@ -91,9 +105,41 @@ public:
 	float GetSizeZ() { return IsDirectionFlippedZ() ? minZ - maxZ : maxZ - minZ; }
 	Size GetSize() { return Size(GetSizeX(), GetSizeY(), GetSizeZ()); }
 
+	bool MaxOverlapsAABBMinX(AxisAlignedBB aabb) { return maxX > aabb.minX; }
+	bool MinOverlapsAABBMaxX(AxisAlignedBB aabb) { return minX < aabb.maxX; }
+	bool MaxOverlapsAABBMinY(AxisAlignedBB aabb) { return maxY > aabb.minY; }
+	bool MinOverlapsAABBMaxY(AxisAlignedBB aabb) { return minY < aabb.maxY; }
+	bool MaxOverlapsAABBMinZ(AxisAlignedBB aabb) { return maxZ > aabb.minZ; }
+	bool MinOverlapsAABBMaxZ(AxisAlignedBB aabb) { return minZ < aabb.maxZ; }
+
+	float GetIntersectionAmountX(AxisAlignedBB aabb) {
+		bool maxOverlapsAABBMin = MaxOverlapsAABBMinX(aabb);
+		bool minOverlapsAABBMax = MinOverlapsAABBMaxX(aabb);
+		//if (maxOverlapsAABBMin && minOverlapsAABBMax) { return 0; }
+		if (maxOverlapsAABBMin) { return maxX - aabb.minX; }
+		else if (minOverlapsAABBMax) { return aabb.maxX - minX; }
+		else { return 0; }
+	}
+	float GetIntersectionAmountY(AxisAlignedBB aabb) {
+		bool maxOverlapsAABBMin = MaxOverlapsAABBMinY(aabb);
+		bool minOverlapsAABBMax = MinOverlapsAABBMaxY(aabb);
+		//if (maxOverlapsAABBMin && minOverlapsAABBMax) { return 0; }
+		if (maxOverlapsAABBMin) { return maxY - aabb.minY; }
+		else if (minOverlapsAABBMax) { return aabb.maxY - minY; }
+		else { return 0; }
+	}
+	float GetIntersectionAmountZ(AxisAlignedBB aabb) {
+		bool maxOverlapsAABBMin = MaxOverlapsAABBMinZ(aabb);
+		bool minOverlapsAABBMax = MinOverlapsAABBMaxZ(aabb);
+		//if (maxOverlapsAABBMin && minOverlapsAABBMax) { return 0; }
+		if (maxOverlapsAABBMin) { return maxZ - aabb.minZ; }
+		else if (minOverlapsAABBMax) { return aabb.maxZ - minZ; }
+		else { return 0; }
+	}
+
 	static AxisAlignedBB CreateAABBFromCenter(Point pos, Size scale) {
 		AxisAlignedBB aabb;
-		aabb.SetFromCenter(pos, scale);
+		aabb.SetPositionFromCenter(pos, scale);
 		return aabb;
 	}
 

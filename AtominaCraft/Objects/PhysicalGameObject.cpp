@@ -9,11 +9,13 @@ void PhysicalGameObject::Reset() {
     GameObject::Reset();
     SetVelocity(Vector3::Zero());
     gravity.Set(0.0f, GH_GRAVITY, 0.0f);
+    mass = 1;
     bounce = 0.0f;
-    friction = 0.0f;
+    friction = 0.02f;
     high_friction = 0.0f;
-    drag = 0.0f;
+    drag = 0.008f;
     useGravity = true;
+    useCollisions = true;
     prev_pos.SetZero();
 }
 
