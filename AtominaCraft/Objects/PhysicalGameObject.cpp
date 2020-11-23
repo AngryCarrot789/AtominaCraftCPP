@@ -8,6 +8,7 @@ PhysicalGameObject::PhysicalGameObject() {
 void PhysicalGameObject::Reset() {
     GameObject::Reset();
     SetVelocity(Vector3::Zero());
+    SetScale(1, 1, 1);
     gravity.Set(0.0f, GH_GRAVITY, 0.0f);
     mass = 1;
     bounce = 0.0f;

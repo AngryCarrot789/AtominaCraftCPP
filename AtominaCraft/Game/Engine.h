@@ -25,6 +25,8 @@ public:
 
   const Player& GetPlayer() const { return *player; }
 
+  HWND GetWindow() { return hWnd; }
+
 private:
   void CreateGLWindow();
   void InitGLGameObjects();
@@ -34,8 +36,8 @@ private:
   void ToggleFullscreen();
 
   HDC   hDC;           // device context
-  HGLRC hRC;				   // opengl context
-  HWND  hWnd;				   // window
+  HGLRC hRC;		   // opengl context
+  HWND  hWnd;		   // window
   HINSTANCE hInstance; // process id
 
   LONG iWidth;         // window width

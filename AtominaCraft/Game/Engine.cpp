@@ -7,6 +7,7 @@
 #include "../Objects/BuiltIn/Tunnel.h"
 #include "../Objects/BuiltIn/Ground.h"
 #include "Debugging/DebugDraw.h"
+#include "../String/Strings.h"
 
 Engine* GH_ENGINE = nullptr;
 Player* GH_PLAYER = nullptr;
@@ -118,25 +119,33 @@ void Engine::LoadWorld() {
     vGameObjects.clear();
     player->Reset();
     player->useGravity = false;
-    std::shared_ptr<Tunnel> tunnel1(new Tunnel(Tunnel::NORMAL));
-    tunnel1->SetPosition(Vector3(-2.4f, 0, -1.8f));
-    tunnel1->SetScale(1, 1, 4.8f);
-    vGameObjects.push_back(tunnel1);
-
-    std::shared_ptr<Tunnel> tunnel2(new Tunnel(Tunnel::NORMAL));
-    tunnel2->SetPosition(Vector3(2.4f, 0, 0));
-    tunnel2->SetScale(1, 1, 0.6f);
-    vGameObjects.push_back(tunnel2);
+    //std::shared_ptr<Tunnel> tunnel1(new Tunnel(Tunnel::NORMAL));
+    //tunnel1->SetPosition(Vector3(-2.4f, 0, -1.8f));
+    //tunnel1->SetScale(1, 1, 4.8f);
+    //vGameObjects.push_back(tunnel1);
+    //
+    //std::shared_ptr<Tunnel> tunnel2(new Tunnel(Tunnel::NORMAL));
+    //tunnel2->SetPosition(Vector3(2.4f, 0, 0));
+    //tunnel2->SetScale(1, 1, 0.6f);
+    //vGameObjects.push_back(tunnel2);
 
     std::shared_ptr<Ground> ground(new Ground());
     ground->SetScale(ground->scale * 1.2f);
     ground->doesDebugDraw = false;
     vGameObjects.push_back(ground);
 
-    //std::shared_ptr<Tunnel> cube(new Tunnel(Tunnel::NORMAL));
-    //cube->SetPosition(0.4f, 1.0f, 0.0f);
-    //cube->scale = Size(1, 1, 1);
-    //vGameObjects.push_back(cube);
+    //std::shared_ptr<Tunnel> cube1(new Tunnel(Tunnel::NORMAL));
+    //cube1->SetPosition(0.4f, 1.0f, 0.0f);
+    //cube1->scale = Size(1, 1, 1);
+    //vGameObjects.push_back(cube1);
+    //std::shared_ptr<Tunnel> cube2(new Tunnel(Tunnel::NORMAL));
+    //cube2->SetPosition(1.6f, 1.0f, 0.0f);
+    //cube2->scale = Size(1, 1, 1);
+    //vGameObjects.push_back(cube2);
+    std::shared_ptr<Tunnel> cube3(new Tunnel(Tunnel::NORMAL));
+    cube3->SetPosition(3.8f, 1.0f, 0.0f);
+    cube3->scale = Size(2, 2, 2);
+    vGameObjects.push_back(cube3);
 
     player->SetPosition(0, GH_PLAYER_HEIGHT, 5);
 
@@ -202,7 +211,7 @@ void Engine::Render(const Camera& cam, GLuint curFBO) {
 
             if (aabb1.IsAABBIntersectingAABB(aabb2)) {
                 Vector3 intersection = aabb1.GetIntersection(aabb2);
-                physObj1->SetVelocity(physObj1->velocity + (intersection / physObj1->mass));
+                physObj1->SetVelocity(physObj1->velocity + (((-intersection) / physObj1->mass) * -physObj1->velocity));
             }
         }
     }

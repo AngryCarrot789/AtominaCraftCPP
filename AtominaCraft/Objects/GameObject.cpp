@@ -9,9 +9,9 @@ GameObject::GameObject() :
 }
 
 void GameObject::Reset() {
-  pos.SetZero();
-  euler.SetZero();
-  scale.SetOnes();
+    SetPosition(Vector3::Zero());
+    SetScale(Vector3::Zero());
+    euler.SetZero();
 }
 
 void GameObject::Draw(const Camera& cam, uint32_t curFBO) {

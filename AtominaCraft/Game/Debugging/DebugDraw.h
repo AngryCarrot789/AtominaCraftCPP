@@ -1,10 +1,12 @@
 #pragma once
 #include "GL/glew.h"
+#include "../../GameHeader.h"
 #include "../../Collisions/AxisAlignedBB.h"
 #include "../../Rendering/Camera.h"
 #include "../../Math/Vector3.h"
 #include "../../Math/Vector4.h"
 #include "../../Math/Matrix4.h"
+#include <Windows.h>
 
 class DebugDrawing {
 public:
@@ -67,5 +69,14 @@ public:
 
 	static void DebugDrawCube(const Camera& cam, Point pos, Size scale) {
 		DrawAABB(cam, AxisAlignedBB::CreateAABBFromCenter(pos, scale));
+	}
+
+	static void DebugDrawString(const char* str) {
+		HWND hwnd = FindWindowA(INSTANCE_CLASS, WINDOW_TITLE);
+		HDC hDC = GetDC(hwnd);
+		RECT r;
+		GetClientRect(hwnd, &r);
+		DrawTextA(hDC, str, -1, &r, DT_TOP | DT_LEFT | DT_NOCLIP);
+		ReleaseDC(hwnd, hDC);
 	}
 };

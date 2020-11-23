@@ -2,6 +2,7 @@
 #include "../Math/Vector3.h"
 #include <math.h>
 #include "../GameHeader.h"
+#include <iostream>
 class AxisAlignedBB {
 public:
 	float minX, minY, minZ;
@@ -112,29 +113,18 @@ public:
 	bool MaxOverlapsAABBMinZ(AxisAlignedBB aabb) { return maxZ > aabb.minZ; }
 	bool MinOverlapsAABBMaxZ(AxisAlignedBB aabb) { return minZ < aabb.maxZ; }
 
+	bool IsBehindAABBX(AxisAlignedBB aabb) { return maxX < aabb.maxX && minX < aabb.minX; }
+	bool IsBehindAABBY(AxisAlignedBB aabb) { return maxY < aabb.maxY && minY < aabb.minY; }
+	bool IsBehindAABBZ(AxisAlignedBB aabb) { return maxZ < aabb.maxZ && minZ < aabb.minZ; }
+	
 	float GetIntersectionAmountX(AxisAlignedBB aabb) {
-		bool maxOverlapsAABBMin = MaxOverlapsAABBMinX(aabb);
-		bool minOverlapsAABBMax = MinOverlapsAABBMaxX(aabb);
-		//if (maxOverlapsAABBMin && minOverlapsAABBMax) { return 0; }
-		if (maxOverlapsAABBMin) { return maxX - aabb.minX; }
-		else if (minOverlapsAABBMax) { return aabb.maxX - minX; }
-		else { return 0; }
+		return IsBehindAABBX(aabb) ? maxX - aabb.minX : aabb.maxX - minX;
 	}
 	float GetIntersectionAmountY(AxisAlignedBB aabb) {
-		bool maxOverlapsAABBMin = MaxOverlapsAABBMinY(aabb);
-		bool minOverlapsAABBMax = MinOverlapsAABBMaxY(aabb);
-		//if (maxOverlapsAABBMin && minOverlapsAABBMax) { return 0; }
-		if (maxOverlapsAABBMin) { return maxY - aabb.minY; }
-		else if (minOverlapsAABBMax) { return aabb.maxY - minY; }
-		else { return 0; }
+		return IsBehindAABBY(aabb) ? maxY - aabb.minY : aabb.maxY - minY;
 	}
 	float GetIntersectionAmountZ(AxisAlignedBB aabb) {
-		bool maxOverlapsAABBMin = MaxOverlapsAABBMinZ(aabb);
-		bool minOverlapsAABBMax = MinOverlapsAABBMaxZ(aabb);
-		//if (maxOverlapsAABBMin && minOverlapsAABBMax) { return 0; }
-		if (maxOverlapsAABBMin) { return maxZ - aabb.minZ; }
-		else if (minOverlapsAABBMax) { return aabb.maxZ - minZ; }
-		else { return 0; }
+		return IsBehindAABBZ(aabb) ? maxZ - aabb.minZ : aabb.maxZ - minZ;
 	}
 
 	static AxisAlignedBB CreateAABBFromCenter(Point pos, Size scale) {

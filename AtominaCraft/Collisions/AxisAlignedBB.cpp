@@ -71,9 +71,9 @@ float AxisAlignedBB::CalculateOffsetZ(const AxisAlignedBB aabb, float a) {
 
 bool AxisAlignedBB::IsAABBIntersectingAABB(AxisAlignedBB aabb) {
 	return
-		aabb.maxX > minX && aabb.minX < maxX&&
-		aabb.maxY > minY && aabb.minY < maxY&&
-		aabb.maxZ > minZ && aabb.minZ < maxZ;
+		(aabb.maxX > minX && aabb.minX < maxX) &&
+		(aabb.maxY > minY && aabb.minY < maxY) &&
+		(aabb.maxZ > minZ && aabb.minZ < maxZ) ;
 }
 
 bool AxisAlignedBB::IsVectorIntersectingAABB(Point p) {

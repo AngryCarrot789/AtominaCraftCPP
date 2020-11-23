@@ -9,15 +9,16 @@ Player::Player() {
 }
 
 void Player::Reset() {
-  PhysicalGameObject::Reset();
-  cam_rx = 0.0f;
-  cam_ry = 0.0f;
-  bob_mag = 0.0f;
-  bob_phi = 0.0f;
-  mass = 20.0f;
-  friction = 0.04f;
-  drag = 0.008f;
-  onGround = true;
+    PhysicalGameObject::Reset();
+    cam_rx = 0.0f;
+    cam_ry = 0.0f;
+    bob_mag = 0.0f;
+    bob_phi = 0.0f;
+    mass = 5.0f;
+    friction = 0.04f;
+    drag = 0.008f;
+    onGround = true;
+    //SetScale(3, 3, 3);
 }
 
 void Player::Update() {
