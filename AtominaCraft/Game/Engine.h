@@ -43,7 +43,9 @@ private:
   LONG iWidth;         // window width
   LONG iHeight;        // window height
   bool isFullscreen;   // fullscreen state
+  bool lockCameraPos;  // Locks the camera position to wherever it was. only really for debug
 
+  Matrix4 cam_mat;
   Camera main_cam;
   Input input;
   Timer timer;

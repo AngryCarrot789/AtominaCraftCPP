@@ -6,9 +6,13 @@
 #include <string>
 #include "../Objects/BuiltIn/Tunnel.h"
 #include "../Objects/BuiltIn/Ground.h"
-#include "Debugging/DebugDraw.h"
 #include "../String/Strings.h"
+#include "../Math/Matrix4.h"
+#include "../Math/Vector3.h"
+#include "../Math/Vector4.h"
+#include "Debugging/DebugDraw.h"
 
+static float rotZ = 0;
 Engine* GH_ENGINE = nullptr;
 Player* GH_PLAYER = nullptr;
 const Input* GH_INPUT = nullptr;
@@ -63,6 +67,7 @@ int Engine::Run() {
     //Game loop
     MSG msg;
     GH_HIDE_MOUSE = true;
+    lockCameraPos = false;
     while (true) {
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             //Handle windows messages
@@ -81,6 +86,15 @@ int Engine::Run() {
             if (input.key_press['1']) {
                 LoadWorld();
             }
+            if (input.key_press['E']) {
+                lockCameraPos = !lockCameraPos;
+            }
+            if (input.key_press['F']) {
+                rotZ += 0.1f;
+            }
+            if (input.key_press['C']) {
+                rotZ -= 0.1f;
+            }
 
             if (input.key_press[VK_RETURN]) {
                 GH_HIDE_MOUSE = !GH_HIDE_MOUSE;
@@ -97,7 +111,10 @@ int Engine::Run() {
             cur_ticks = (cur_ticks < new_ticks ? new_ticks : cur_ticks);
 
             //Setup camera for rendering
-            main_cam.worldView = player->WorldToCam();
+            if (!lockCameraPos) {
+                cam_mat = player->WorldToCam();
+            }
+            main_cam.worldView = cam_mat;
             main_cam.SetSize(iWidth, iHeight, GH_NEAR_MIN, GH_FAR);
             main_cam.UseViewport();
 
@@ -111,8 +128,6 @@ int Engine::Run() {
     DestroyGLGameObjects();
     return 0;
 }
-
-AxisAlignedBB aabb;
 
 void Engine::LoadWorld() {
     //Clear out old scene
@@ -144,51 +159,26 @@ void Engine::LoadWorld() {
     //vGameObjects.push_back(cube2);
     std::shared_ptr<Tunnel> cube3(new Tunnel(Tunnel::NORMAL));
     cube3->SetPosition(3.8f, 1.0f, 0.0f);
-    cube3->scale = Size(2, 2, 2);
+    cube3->scale = Size(1,1,1);
     vGameObjects.push_back(cube3);
 
     player->SetPosition(0, GH_PLAYER_HEIGHT, 5);
 
     vGameObjects.push_back(player);
-
-    aabb.SetPositionFromCenter(Vector3::Zero(), Vector3::Ones());
 }
-
 void Engine::Update() {
     //Update
     for (size_t i = 0; i < vGameObjects.size(); ++i) {
-        assert(vGameObjects[i].get());
-        vGameObjects[i]->Update();
-    }
-}
-
-void Engine::Render(const Camera& cam, GLuint curFBO) {
-    //Clear buffers
-    if (GH_USE_SKY) {
-        glClear(GL_DEPTH_BUFFER_BIT);
-        sky->Draw(cam);
-    }
-    else {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    //Create queries (if applicable)
-    GLuint queries[GH_MAX_PORTALS];
-    GLuint drawTest[GH_MAX_PORTALS];
-
-    //Draw scene
-    for (size_t i = 0; i < vGameObjects.size(); ++i) {
         std::shared_ptr<GameObject>& obj1 = vGameObjects[i];
+
+        obj1->Update();
+
         PhysicalGameObject* physObj1 = obj1->AsPhysicalGameObject();
-
-        obj1->Draw(cam, curFBO);
-
         if (!physObj1)
             continue;
         if (!physObj1->useCollisions)
             continue;
 
-        DebugDrawing::DrawAABB(cam, physObj1->collider);
 
         // physObj1 isnt null and it uses collision detection
         // Collision checking
@@ -208,13 +198,61 @@ void Engine::Render(const Camera& cam, GLuint curFBO) {
 
             AxisAlignedBB aabb1 = physObj1->collider;
             AxisAlignedBB aabb2 = physObj2->collider;
+            //Point diff = physObj1->PosDifference();
+            //
+            //bool isIntersectB = aabb1.IsAABBIntersectingAABB(aabb2);
+            //
+            //std::string isIntersect;
+            //if (isIntersectB) isIntersect = "true";
+            //else isIntersect = "false";
+            //    
+            //std::string xOffset = "X Intersection: " + std::to_string(aabb1.GetIntersectionAmountX(aabb2));
+            //std::string yOffset = "Y Intersection: " + std::to_string(aabb1.GetIntersectionAmountY(aabb2));
+            //std::string zOffset = "Z Intersection: " + std::to_string(aabb1.GetIntersectionAmountZ(aabb2));
+            //
+            //std::vector <std::string> lines;
+            //lines.push_back(isIntersect);
+            //lines.push_back(xOffset);
+            //lines.push_back(yOffset);
+            //lines.push_back(zOffset);
+            //
+            //DrawMultilineText(lines, 5, 5);
 
             if (aabb1.IsAABBIntersectingAABB(aabb2)) {
                 Vector3 intersection = aabb1.GetIntersection(aabb2);
-                physObj1->SetVelocity(physObj1->velocity + (((-intersection) / physObj1->mass) * -physObj1->velocity));
+                //physObj1->SetVelocity(physObj1->velocity + (((-intersection) / physObj1->mass) * -physObj1->velocity));
             }
         }
     }
+}
+
+void Engine::Render(const Camera& cam, GLuint curFBO) {
+    //Clear buffers
+    if (GH_USE_SKY) {
+        glClear(GL_DEPTH_BUFFER_BIT);
+        sky->Draw(cam);
+    }
+    else {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    //Draw scene
+    for (size_t i = 0; i < vGameObjects.size(); ++i) {
+        std::shared_ptr<GameObject>& obj1 = vGameObjects[i];
+        PhysicalGameObject* physObj1 = obj1->AsPhysicalGameObject();
+        obj1->Draw(cam, curFBO);
+        if (physObj1) {
+            //DrawAABBOutline(cam, physObj1->collider);
+        }
+    }
+
+    DrawXYZAxis(cam.projection, player->cam_ry, player->cam_rx, rotZ);
+    std::string xyz = "Position:\n";
+        xyz += 
+            "   X: " + std::to_string(player->pos.x) + "\n" +
+            "   Y: " + std::to_string(player->pos.y) + "\n" +
+            "   Z: " + std::to_string(player->pos.z);
+    DebugDrawString(xyz.c_str(), 5, 5);
 
 #if 0
     //Debug draw outline

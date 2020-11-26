@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "../GameHeader.h"
+#include "../Math/Maths.h"
 #include "../Inputs/Input.h"
 #include <Windows.h>
 #include <iostream>
@@ -18,7 +19,7 @@ void Player::Reset() {
     friction = 0.04f;
     drag = 0.008f;
     onGround = true;
-    //SetScale(3, 3, 3);
+    SetScale(0.6f, 1.2f, 0.6f);
 }
 
 void Player::Update() {
@@ -31,13 +32,14 @@ void Player::Update() {
     }
     else {
         bob_phi += GH_BOB_FREQ * GH_DELTATIME;
-        if (bob_phi > 2 * GH_PI) {
-            bob_phi -= 2 * GH_PI;
+        if (bob_phi > 2 * Maths::PI) {
+            bob_phi -= 2 * Maths::PI;
         }
     }
 
     //Physics
     PhysicalGameObject::Update();
+    //collider.SetPositionFromCenter(pos, PreviewScale);
 
     //Looking
     Look(GH_INPUT->mouse_dx, GH_INPUT->mouse_dy);
@@ -76,33 +78,33 @@ void Player::Update() {
 void Player::Look(float mouseDx, float mouseDy) {
     //Adjust x-axis rotation
     cam_rx -= mouseDy * GH_MOUSE_SENSITIVITY;
-    if (cam_rx > GH_PI / 2) {
-        cam_rx = GH_PI / 2;
+    if (cam_rx > Maths::PI / 2) {
+        cam_rx = Maths::PI / 2;
     }
-    else if (cam_rx < -GH_PI / 2) {
-        cam_rx = -GH_PI / 2;
+    else if (cam_rx < -Maths::PI / 2) {
+        cam_rx = -Maths::PI / 2;
     }
 
     //Adjust y-axis rotation
     cam_ry -= mouseDx * GH_MOUSE_SENSITIVITY;
-    if (cam_ry > GH_PI) {
-        cam_ry -= GH_PI * 2;
+    if (cam_ry > Maths::PI) {
+        cam_ry -= Maths::PI * 2;
     }
-    else if (cam_ry < -GH_PI) {
-        cam_ry += GH_PI * 2;
+    else if (cam_ry < -Maths::PI) {
+        cam_ry += Maths::PI * 2;
     }
 }
 
 void Player::Move(float moveF, float moveL, float moveUp) {
-    move_f = GH_CLAMP(moveF, -1.0f, 1.0f);
-    move_l = GH_CLAMP(moveL, -1.0f, 1.0f);
-    move_up = GH_CLAMP(moveUp, -1.0f, 1.0f);
+    move_f = Maths::Clamp(moveF, -1.0f, 1.0f);
+    move_l = Maths::Clamp(moveL, -1.0f, 1.0f);
+    move_up = Maths::Clamp(moveUp, -1.0f, 1.0f);
 
     // Movement
     // Movement speed meets an equilibrium between movementSpeed and drag.
     // movementSpeed will keep accelerating an object, but the drag will slow it back down
     float accelerator = (WalkAcceleration * GH_DELTATIME);
-    const Matrix4 camToWorld = LocalToWorld() * Matrix4::RotY(cam_ry);
+    const Matrix4 camToWorld = LocalToWorld() * Matrix4::RotatedY(cam_ry);
     Euler lookDirection = camToWorld.MulDirection(Vector3(-move_l, 0, -move_f));
     Vector3 movementSpeed = lookDirection * accelerator;
     movementSpeed += (Vector3(0, moveUp, 0) * accelerator);
@@ -137,25 +139,25 @@ void Player::OnCollide(GameObject& other, const Vector3& push) {
     //friction = cur_friction;
 }
 
-Matrix4 Player::WorldToCam() const {
-  return Matrix4::RotX(-cam_rx) * 
-      Matrix4::RotY(-cam_ry) * 
-      Matrix4::Trans(-CamOffset()) * 
-      WorldToLocal();
+Matrix4 Player::WorldToCam() {
+    return Matrix4::RotatedX(-cam_rx) *
+        Matrix4::RotatedY(-cam_ry) *
+        Matrix4::Translated(-CamOffset()) *
+        Player::WorldToLocal();
 }
 
-Matrix4 Player::CamToWorld() const {
-  return LocalToWorld() * Matrix4::Trans(CamOffset()) * Matrix4::RotY(cam_ry) * Matrix4::RotX(cam_rx);
+Matrix4 Player::CamToWorld() {
+  return Player::LocalToWorld() * Matrix4::Translated(CamOffset()) * Matrix4::RotatedY(cam_ry) * Matrix4::RotatedX(cam_rx);
 }
 
-Vector3 Player::CamOffset() const {
+Vector3 Player::CamOffset() {
     //If bob is too small, don't even bother
     if (bob_mag < GH_BOB_MIN) {
       return Vector3::Zero();
     }
     
     //Convert bob to translation
-    const float theta = (GH_PI/2) * std::sin(bob_phi);
+    const float theta = (Maths::PI/2) * std::sin(bob_phi);
     const float y = bob_mag * GH_BOB_OFFS * (1.0f - std::cos(theta));
     return Vector3(0, y, 0);
     //return Vector3(0, 0, 0);

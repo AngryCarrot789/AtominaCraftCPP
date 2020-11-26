@@ -2,6 +2,8 @@
 #include <cmath>
 #include <cfloat>
 #include <cassert>
+#include "../GameHeader.h"
+#include "Maths.h"
 
 class Vector3 {
 public:
@@ -17,6 +19,12 @@ public:
     inline static Vector3 UnitX() { return Vector3(1, 0, 0); }
     inline static Vector3 UnitY() { return Vector3(0, 1, 0); }
     inline static Vector3 UnitZ() { return Vector3(0, 0, 1); }
+    inline static Vector3 Up()       { return Vector3( 0,  1,  0); }
+    inline static Vector3 Down()     { return Vector3( 0, -1,  0); }
+    inline static Vector3 Left()     { return Vector3( 1,  0,  0); }
+    inline static Vector3 Right()    { return Vector3(-1,  0,  0); }
+    inline static Vector3 Forward()  { return Vector3( 0,  0,  1); }
+    inline static Vector3 Backward() { return Vector3( 0,  0, -1); }
 
     //Setters
     inline void Set(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
@@ -122,6 +130,13 @@ public:
         }
     }
 
+    inline Vector3 DegreesToRadians() {
+        return *this / Maths::DEG_RAD_CONST;
+    }
+    inline Vector3 RadiansToDegrees() {
+        return *this * Maths::DEG_RAD_CONST;
+    }
+
     //Other
     inline bool IsNDC() const {
         return (x > -1.0f && x < 1.0f && y > -1.0f && y < 1.0f && z > -1.0f && z < 1.0f);
@@ -145,10 +160,14 @@ inline void operator/=(float b, Vector3& v) {
 typedef Vector3 Vertex;
 // Represents a point/position in space
 typedef Vector3 Point;
-// Represents a euler rotation
+// Represents a euler rotation.
+// X = pitch, Y = yaw, Z = roll 
 typedef Vector3 Euler;
 // Represents a scale
 typedef Vector3 Size;
+// Represents an axis or direction
+// In this world, Y = up, Z = forward, X = Left in terms of the direction which is positive
+typedef Vector3 Axis;
 
 //Debug printing
 //inline std::ostream& operator<<(std::ostream& out, const Vector3& v) {

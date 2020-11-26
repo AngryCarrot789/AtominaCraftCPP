@@ -51,9 +51,6 @@
     <ClCompile Include="Inputs\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collisions\AxisAlignedBB.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -144,6 +141,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Objects\PhysicalGameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Maths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

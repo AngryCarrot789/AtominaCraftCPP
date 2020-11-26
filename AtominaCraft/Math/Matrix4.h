@@ -56,45 +56,72 @@ public:
     //Statics
     inline static Matrix4 Zero() { Matrix4 m; m.MakeZero(); return m; }
     inline static Matrix4 Identity() { Matrix4 m; m.MakeIdentity(); return m; }
-    inline static Matrix4 RotX(float a) { Matrix4 m; m.MakeRotX(a); return m; }
-    inline static Matrix4 RotY(float a) { Matrix4 m; m.MakeRotY(a); return m; }
-    inline static Matrix4 RotZ(float a) { Matrix4 m; m.MakeRotZ(a); return m; }
-    inline static Matrix4 Trans(const Vector3& t) { Matrix4 m; m.MakeTrans(t); return m; }
-    inline static Matrix4 Scale(float s) { Matrix4 m; m.MakeScale(Vector3(s)); return m; }
-    inline static Matrix4 Scale(const Vector3& s) { Matrix4 m; m.MakeScale(s); return m; }
+    inline static Matrix4 RotatedX(float a) { Matrix4 m; m.MakeRotX(a); return m; }
+    inline static Matrix4 RotatedY(float a) { Matrix4 m; m.MakeRotY(a); return m; }
+    inline static Matrix4 RotatedZ(float a) { Matrix4 m; m.MakeRotZ(a); return m; }
+    inline static Matrix4 Translated(const Vector3& t) { Matrix4 m; m.MakeTrans(t); return m; }
+    inline static Matrix4 Scaled(float s) { Matrix4 m; m.MakeScale(Vector3(s)); return m; }
+    inline static Matrix4 Scaled(const Vector3& s) { Matrix4 m; m.MakeScale(s); return m; }
 
     inline static Matrix4 CreateLocalToWorld(Point pos, Euler euler, Size scale) {
         return
-            Matrix4::Trans(pos) *
-            Matrix4::RotY(euler.y) *
-            Matrix4::RotX(euler.x) *
-            Matrix4::RotZ(euler.z) *
-            Matrix4::Scale(scale);
+            Matrix4::Translated(pos) *
+            Matrix4::RotatedY(euler.y) *
+            Matrix4::RotatedX(euler.x) *
+            Matrix4::RotatedZ(euler.z) *
+            Matrix4::Scaled(scale);
     }
 
     inline static Matrix4 CreateWorldToLocal(Point pos, Euler euler, Size scale) {
         return
-            Matrix4::Scale(1.0f / scale) *
-            Matrix4::RotZ(-euler.z) *
-            Matrix4::RotX(-euler.x) *
-            Matrix4::RotY(-euler.y) *
-            Matrix4::Trans(-pos);
+            Matrix4::Scaled(1.0f / scale) *
+            Matrix4::RotatedZ(-euler.z) *
+            Matrix4::RotatedX(-euler.x) *
+            Matrix4::RotatedY(-euler.y) *
+            Matrix4::Translated(-pos);
+    }
+    inline static Matrix4 CreateProjection(int w, int h, float fov, float n, float f) {
+        const float fovRads = 1.0f / std::tan(fov * Maths::PI / 360.0f);
+        const float aspect = ((float)h) / ((float)w);
+        const float distance = n - f;
+
+        Matrix4 projection;
+        projection.m[0] = fovRads * aspect;
+        projection.m[1] = 0.0f;
+        projection.m[2] = 0.0f;
+        projection.m[3] = 0.0f;
+
+        projection.m[4] = 0.0f;
+        projection.m[5] = fovRads;
+        projection.m[6] = 0.0f;
+        projection.m[7] = 0.0f;
+
+        projection.m[8] = 0.0f;
+        projection.m[9] = 0.0f;
+        projection.m[10] = (n + f) / distance;
+        projection.m[11] = (2 * n * f) / distance;
+
+        projection.m[12] = 0.0f;
+        projection.m[13] = 0.0f;
+        projection.m[14] = -1.0f;
+        projection.m[15] = 0.0f;
+        return projection;
     }
 
     //Some getters
-    inline Vector3 XAxis() const {
+    inline Axis XAxis() const {
         return Vector3(m[0], m[4], m[8]);
     }
-    inline Vector3 YAxis() const {
+    inline Axis YAxis() const {
         return Vector3(m[1], m[5], m[9]);
     }
-    inline Vector3 ZAxis() const {
+    inline Axis ZAxis() const {
         return Vector3(m[2], m[6], m[10]);
     }
     inline Point Translation() const {
         return Vector3(m[3], m[7], m[11]);
     }
-    inline Size Scale() const {
+    inline Size Scaled() const {
         return Vector3(m[0], m[5], m[10]);
     }
 

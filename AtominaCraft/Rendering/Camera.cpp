@@ -2,6 +2,7 @@
 #include "GL/glew.h"
 #include <cmath>
 #include "../GameHeader.h"
+#include "../Math/Maths.h"
 
 Camera::Camera() :
   width(256),
@@ -16,8 +17,8 @@ void Camera::SetSize(int w, int h, float n, float f) {
   cam_near = n;
   cam_far = f;
 
-  const float fovRads = 1.0f / std::tan(GH_FOV * GH_PI / 360.0f);
-  const float aspect = float(height) / float(width);
+  const float fovRads = 1.0f / std::tan(GH_FOV * Maths::PI / 360.0f);
+  const float aspect = ((float)height) / ((float)width);
   const float distance = cam_near - cam_far;
 
   projection.m[0] = fovRads * aspect;
@@ -42,7 +43,7 @@ void Camera::SetSize(int w, int h, float n, float f) {
 }
 
 void Camera::SetPositionOrientation(const Vector3& pos, float rotX, float rotY) {
-  worldView = Matrix4::RotX(rotX) * Matrix4::RotY(rotY) * Matrix4::Trans(-pos);
+  worldView = Matrix4::RotatedX(rotX) * Matrix4::RotatedY(rotY) * Matrix4::Translated(-pos);
 }
 
 Matrix4 Camera::InverseProjection() const {

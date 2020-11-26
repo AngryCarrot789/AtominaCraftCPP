@@ -68,18 +68,100 @@ public:
 		maxX += x; maxY += y; maxZ += z;
 	}
 
-	float CalculateOffsetX(const AxisAlignedBB aabb, float a);
-	float CalculateOffsetY(const AxisAlignedBB aabb, float a);
-	float CalculateOffsetZ(const AxisAlignedBB aabb, float a);
+	float CalculateOffsetX(const AxisAlignedBB aabb) {
+		float a = 0;
+		if (aabb.maxY > minY && aabb.minY < maxY) {
+			if (aabb.maxZ > minZ && aabb.minZ < maxZ) {
+				float b = 0;
+				if (aabb.maxX <= minX) {
+					b = minX - aabb.maxX;
+					if (b < 0) {
+						a = b;
+					}
+				}
+				if (aabb.minX >= maxX) {
+					b = maxX - aabb.minX;
+					if (b > 0) {
+						a = b;
+					}
+				}
+				return a;
+			}
+			else return a;
+		}
+		else return a;
+	}
 
-	bool IsAABBIntersectingAABB(AxisAlignedBB aabb);
-	bool IsVectorIntersectingAABB(Point p);
+	float CalculateOffsetY(const AxisAlignedBB aabb) {
+		float a = 0;
+		if (aabb.maxX > minX && aabb.minX < maxX) {
+			if (aabb.maxZ > minZ && aabb.minZ < maxZ) {
+				float b = 0;
+				if (aabb.maxY <= minY) {
+					b = minY - aabb.maxY;
+					if (b < 0) {
+						a = b;
+					}
+				}
+				if (aabb.minY >= maxY) {
+					b = maxY - aabb.minY;
+					if (b > 0) {
+						a = b;
+					}
+				}
+				return a;
+			}
+			else return a;
+		}
+		else return a;
+	}
+
+	float CalculateOffsetZ(const AxisAlignedBB aabb) {
+		float a = 0;
+		if (aabb.maxX > minX && aabb.minX < maxX) {
+			if (aabb.maxY > minY && aabb.minY < maxY) {
+				float b = 0;
+				if (aabb.maxZ <= minZ) {
+					b = minZ - aabb.maxZ;
+					if (b < 0) {
+						a = b;
+					}
+				}
+				if (aabb.minZ >= maxZ) {
+					b = maxZ - aabb.minZ;
+					if (b > 0) {
+						a = b;
+					}
+				}
+				return a;
+			}
+			else return a;
+		}
+		else return a;
+	}
+
+	bool IsAABBIntersectingAABB(AxisAlignedBB aabb) {
+		bool x = IntersectsAABBX(aabb);
+		bool y = IntersectsAABBY(aabb);
+		bool z = IntersectsAABBZ(aabb);
+		bool isIntersect = x && y && z;
+		return isIntersect;
+	}
+
+	bool IsVectorIntersectingAABB(Point p) {
+		return
+			(p.x > minX && p.x < maxX) &&
+			(p.y > minY && p.y < maxY) &&
+			(p.z > minZ && p.z < maxZ);
+	}
 
 	Vector3 GetIntersection(AxisAlignedBB aabb) {
-		return Vector3(
-			GetIntersectionAmountX(aabb),
-			GetIntersectionAmountY(aabb),
-			GetIntersectionAmountZ(aabb));
+		return
+			Vector3(
+				GetIntersectionAmountX(aabb),
+				GetIntersectionAmountY(aabb),
+				GetIntersectionAmountZ(aabb)
+			);
 	}
 
 	bool IsAABBVecIntersecting(Vector3 intersection) {
@@ -94,9 +176,50 @@ public:
 		return (x + y + z) / 3.0f;
 	}
 
-	bool XYIntersects(float x, float y);
-	bool YZIntersects(float y, float z);
-	bool ZXIntersects(float z, float x);
+	// returns true if the X axis intersects a given AABB's X axis
+	bool IntersectsAABBX(AxisAlignedBB aabb) {
+		return aabb.maxX > minX && aabb.minX < maxX;
+	}
+
+	// returns true if the Y axis intersects a given AABB's Y axis
+	bool IntersectsAABBY(AxisAlignedBB aabb) {
+		return aabb.maxY > minY && aabb.minY < maxY;
+	}
+
+	// returns true if the Z axis intersects a given AABB's Z axis
+	bool IntersectsAABBZ(AxisAlignedBB aabb) {
+		return aabb.maxZ > minZ && aabb.minZ < maxZ;
+	}
+
+	// Returns how much the X axis intersects the given AABB's X axis
+	float GetIntersectionAmountX(AxisAlignedBB aabb) { 
+		if (IntersectsAABBY(aabb) && IntersectsAABBZ(aabb)) {
+			float val = IsBehindAABBX(aabb) ? maxX - aabb.minX : aabb.maxX - minX;
+			//return val > 0 ? val : 0;
+			return val;
+		}
+		return 0;
+	}
+
+	// Returns how much the Y axis intersects the given AABB's Y axis
+	float GetIntersectionAmountY(AxisAlignedBB aabb) {
+		if (IntersectsAABBX(aabb) && IntersectsAABBZ(aabb)) {
+			float val = IsBehindAABBY(aabb) ? maxY - aabb.minY : aabb.maxY - minY;
+			//return val > 0 ? val : 0;
+			return val;
+		}
+		return 0;
+	}
+
+	// Returns how much the Z axis intersects the given AABB's Z axis
+	float GetIntersectionAmountZ(AxisAlignedBB aabb) {
+		if (IntersectsAABBX(aabb) && IntersectsAABBY(aabb)) {
+			float val = IsBehindAABBZ(aabb) ? maxZ - aabb.minZ : aabb.maxZ - minZ;
+			//return val > 0 ? val : 0;
+			return val;
+		}
+		return 0;
+	}
 
 	Point GetMinimum() { return Point(minX, minY, minZ); }
 	Point GetMaximum() { return Point(maxX, maxY, maxZ); }
@@ -117,15 +240,6 @@ public:
 	bool IsBehindAABBY(AxisAlignedBB aabb) { return maxY < aabb.maxY && minY < aabb.minY; }
 	bool IsBehindAABBZ(AxisAlignedBB aabb) { return maxZ < aabb.maxZ && minZ < aabb.minZ; }
 	
-	float GetIntersectionAmountX(AxisAlignedBB aabb) {
-		return IsBehindAABBX(aabb) ? maxX - aabb.minX : aabb.maxX - minX;
-	}
-	float GetIntersectionAmountY(AxisAlignedBB aabb) {
-		return IsBehindAABBY(aabb) ? maxY - aabb.minY : aabb.maxY - minY;
-	}
-	float GetIntersectionAmountZ(AxisAlignedBB aabb) {
-		return IsBehindAABBZ(aabb) ? maxZ - aabb.minZ : aabb.maxZ - minZ;
-	}
 
 	static AxisAlignedBB CreateAABBFromCenter(Point pos, Size scale) {
 		AxisAlignedBB aabb;

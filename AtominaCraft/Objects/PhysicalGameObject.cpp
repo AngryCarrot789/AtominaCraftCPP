@@ -7,7 +7,7 @@ PhysicalGameObject::PhysicalGameObject() {
 
 void PhysicalGameObject::Reset() {
     GameObject::Reset();
-    SetVelocity(Vector3::Zero());
+    SetVelocity(Axis::Zero());
     SetScale(1, 1, 1);
     gravity.Set(0.0f, GH_GRAVITY, 0.0f);
     mass = 1;
@@ -21,7 +21,6 @@ void PhysicalGameObject::Reset() {
 }
 
 void PhysicalGameObject::Update() {
-    prev_pos = pos;
     if (useGravity)
         SetVelocity(velocity + gravity * GH_DELTATIME);
     SetVelocity(velocity * (1.0f - drag));

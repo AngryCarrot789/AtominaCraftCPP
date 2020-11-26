@@ -33,8 +33,8 @@ public:
 
 	// Returns a matrix that can be used to determind the location 
 	// of the vertices of a specific object in world space
-	Matrix4 LocalToWorld() const;
-	Matrix4 WorldToLocal() const;
+	virtual Matrix4 LocalToWorld();
+	virtual Matrix4 WorldToLocal();
 
 	Vector3 Forward() const;
 
