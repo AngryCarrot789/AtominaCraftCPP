@@ -22,25 +22,31 @@ public:
         m[8] = 0.0f; m[9] = 0.0f; m[10] = 1.0f; m[11] = 0.0f;
         m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f;
     }
-    inline void MakeRotX(float a) {
-        m[0] = 1.0f; m[1] = 0.0f;        m[2] = 0.0f;         m[3] = 0.0f;
-        m[4] = 0.0f; m[5] = std::cos(a); m[6] = -std::sin(a); m[7] = 0.0f;
-        m[8] = 0.0f; m[9] = std::sin(a); m[10] = std::cos(a);  m[11] = 0.0f;
-        m[12] = 0.0f; m[13] = 0.0f;        m[14] = 0.0f;         m[15] = 1.0f;
+    inline void MakeRotationX(float a) {
+        float sin = std::sin(a);
+        float cos = std::cos(a);
+        m[0] = 1.0f; m[1] = 0.0f;   m[2] = 0.0f;   m[3] = 0.0f;
+        m[4] = 0.0f; m[5] = cos;    m[6] = -sin;   m[7] = 0.0f;
+        m[8] = 0.0f; m[9] = sin;    m[10] = cos;   m[11] = 0.0f;
+        m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f;  m[15] = 1.0f;
     }
-    inline void MakeRotY(float a) {
-        m[0] = std::cos(a);  m[1] = 0.0f; m[2] = std::sin(a); m[3] = 0.0f;
-        m[4] = 0.0f;         m[5] = 1.0f; m[6] = 0.0f;        m[7] = 0.0f;
-        m[8] = -std::sin(a); m[9] = 0.0f; m[10] = std::cos(a); m[11] = 0.0f;
-        m[12] = 0.0f;         m[13] = 0.0f; m[14] = 0.0f;        m[15] = 1.0f;
+    inline void MakeRotationY(float a) {
+        float sin = std::sin(a);
+        float cos = std::cos(a);
+        m[0] = cos;   m[1] = 0.0f;  m[2] = sin;   m[3] = 0.0f;
+        m[4] = 0.0f;  m[5] = 1.0f;  m[6] = 0.0f;  m[7] = 0.0f;
+        m[8] = -sin;  m[9] = 0.0f;  m[10] = cos;  m[11] = 0.0f;
+        m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f;
     }
-    inline void MakeRotZ(float a) {
-        m[0] = std::cos(a); m[1] = -std::sin(a); m[2] = 0.0f; m[3] = 0.0f;
-        m[4] = std::sin(a); m[5] = std::cos(a);  m[6] = 0.0f; m[7] = 0.0f;
-        m[8] = 0.0f;        m[9] = 0.0f;         m[10] = 1.0f; m[11] = 0.0f;
-        m[12] = 0.0f;        m[13] = 0.0f;         m[14] = 0.0f; m[15] = 1.0f;
+    inline void MakeRotationZ(float a) {
+        float sin = std::sin(a);
+        float cos = std::cos(a);
+        m[0] = cos;   m[1] = -sin;  m[2] = 0.0f;  m[3] = 0.0f;
+        m[4] = sin;   m[5] = cos;   m[6] = 0.0f;  m[7] = 0.0f;
+        m[8] = 0.0f;  m[9] = 0.0f;  m[10] = 1.0f; m[11] = 0.0f;
+        m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f;
     }
-    inline void MakeTrans(const Vector3& t) {
+    inline void MakeTranslation(const Vector3& t) {
         m[0] = 1.0f; m[1] = 0.0f; m[2] = 0.0f; m[3] = t.x;
         m[4] = 0.0f; m[5] = 1.0f; m[6] = 0.0f; m[7] = t.y;
         m[8] = 0.0f; m[9] = 0.0f; m[10] = 1.0f; m[11] = t.z;
@@ -56,10 +62,10 @@ public:
     //Statics
     inline static Matrix4 Zero() { Matrix4 m; m.MakeZero(); return m; }
     inline static Matrix4 Identity() { Matrix4 m; m.MakeIdentity(); return m; }
-    inline static Matrix4 RotatedX(float a) { Matrix4 m; m.MakeRotX(a); return m; }
-    inline static Matrix4 RotatedY(float a) { Matrix4 m; m.MakeRotY(a); return m; }
-    inline static Matrix4 RotatedZ(float a) { Matrix4 m; m.MakeRotZ(a); return m; }
-    inline static Matrix4 Translated(const Vector3& t) { Matrix4 m; m.MakeTrans(t); return m; }
+    inline static Matrix4 RotatedX(float a) { Matrix4 m; m.MakeRotationX(a); return m; }
+    inline static Matrix4 RotatedY(float a) { Matrix4 m; m.MakeRotationY(a); return m; }
+    inline static Matrix4 RotatedZ(float a) { Matrix4 m; m.MakeRotationZ(a); return m; }
+    inline static Matrix4 Translated(const Vector3& t) { Matrix4 m; m.MakeTranslation(t); return m; }
     inline static Matrix4 Scaled(float s) { Matrix4 m; m.MakeScale(Vector3(s)); return m; }
     inline static Matrix4 Scaled(const Vector3& s) { Matrix4 m; m.MakeScale(s); return m; }
 

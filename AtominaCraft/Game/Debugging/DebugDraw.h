@@ -86,12 +86,12 @@ static void DrawXYZAxis(const Matrix4& proj, float rotX, float rotY, float rotZ)
 	//Euler e = Euler(rotY * Maths::Cos(rotX), rotX, 0);
 	Point pos = Point(0.0f, 0.0f, -1.0f);
 	Size scale = Size(0.1f);
-	Euler rot = Euler(rotY, -rotX, 0.0f);
+	Quaternion q = Quaternion::AxisAngles(-rotY, Axis::Up()) * Quaternion::AxisAngles(-rotX, Axis::Forward());
 	//Quaternion q = Quaternion::RotateAxisZ(rot);
 	//Matrix4 local = Matrix4::CreateWorldToLocal(Vector3(0.5f, 0.5f, 0.0f), e, Size(0.2f));
 	//Matrix4 world = local;
 	//Matrix4 worldView = Matrix4::CreateLocalToWorld(pos, rot, scale);
-	Matrix4 worldView = Matrix4::CreateLocalToWorld(pos, rot, scale);
+	Matrix4 worldView = Matrix4::CreateLocalToWorld(pos, Quaternion::ToEuler(q), scale);
 	Matrix4 world = proj * worldView;
 	Vector4 c  = world * Vector4( 0,  0,  0, 1);
 	Vector4 xP = world * Vector4( 1.5f,  0.0f,  0.0f, 1);

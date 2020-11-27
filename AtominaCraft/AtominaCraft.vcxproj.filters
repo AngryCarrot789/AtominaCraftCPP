@@ -57,6 +57,9 @@
     <ClCompile Include="Objects\PhysicalGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Quaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameHeader.h">
@@ -147,6 +150,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\Maths.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
